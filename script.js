@@ -1,6 +1,6 @@
 var barData = []; //The visualized data on the bar chart
 
-for (var i=0; i<40; i++) { //Adding random data
+for (var i=0; i<10; i++) { //Adding random data
     barData.push(Math.round(Math.random()*100)+5);
 } 
 
@@ -87,4 +87,19 @@ yGuide.attr('transform', 'translate(35, 0)')
         .selectAll('path')
         .style({'fill': 'none', 'stroke': '#000'})
 yGuide.selectAll('line')
+        .style({'stroke': '#000'})
+
+var xAxis = d3.svg.axis()
+    .scale(xScale)
+    .orient('bottom')
+    .tickValues(xScale.domain().filter(function(d, i) {
+        return !(i % (barData.length/5));
+    }))
+
+var xGuide = d3.select('svg').append('g')
+xAxis(xGuide)
+xGuide.attr('transform', 'translate(0, '+ (height-30) +')')
+        .selectAll('path')
+        .style({'fill': 'none', 'stroke': '#000'})
+xGuide.selectAll('line')
         .style({'stroke': '#000'})
