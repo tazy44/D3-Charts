@@ -15,7 +15,7 @@ var yScale = d3.scale.linear() //Limiting the height of the bars on the Y dimens
                .domain([0, d3.max(barData)+(d3.max(barData)*0.1)]); //The extra 10% makes the chart more readable
 
 var xScale = d3.scale.ordinal() //Limiting the width of the bars on the X dimension using an ordinal scale
-               .rangeBands([0, width])
+               .rangeBands([0, width], 0.1)
                .domain(d3.range(0, barData.length));
 
 var colors = d3.scale.linear()
@@ -32,6 +32,7 @@ var barChart = d3.select('#bar-chart').append('svg') //Drawing the canvas
     .attr('width', width)
     .attr('height', height)
     .style('background', '#C9D7D6')
+    .append('g') //Grouping all the rects of the bar chart together
     .selectAll('rect').data(barData) //Drawing the data
     .enter().append('rect')
     .style('fill', colors)
@@ -55,6 +56,8 @@ var barChart = d3.select('#bar-chart').append('svg') //Drawing the canvas
         .style('opacity', '0.5');
     })
     .on('mouseout', function(d) {
+        tooltip.transition()
+        .style('opacity', 0)
         d3.select(this)
         .style('fill', tempColor)
         .style('opacity', '1');
@@ -68,3 +71,20 @@ barChart.transition()
         return height-yScale(d); 
     })
     .duration(1000).ease('linear')
+
+var yGuideScale = d3.scale.linear()
+                    .range([height, 0])
+                    .domain([0, d3.max(barData)+(d3.max(barData)*0.1)]);
+
+var yAxis = d3.svg.axis()
+            .scale(yGuideScale)
+            .orient('left')
+            .ticks(10)
+
+var yGuide = d3.select('svg').append('g')
+yAxis(yGuide)
+yGuide.attr('transform', 'translate(35, 0)')
+        .selectAll('path')
+        .style({'fill': 'none', 'stroke': '#000'})
+yGuide.selectAll('line')
+        .style({'stroke': '#000'})
