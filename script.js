@@ -2,10 +2,12 @@ var barData = []; //The visualized data on the bar chart
 
 for (var i=0; i<10; i++) { //Adding random data
     barData.push(Math.round(Math.random()*100)+5);
-} 
+}
 
-var height = 200,
-    width = 600,
+var margin = {top: 30, right: 30, bottom:30, left: 45};
+
+var height = 400 - margin.top - margin.bottom,
+    width = 700 - margin.left - margin.right,
     //barOffset = 5,
     tempColor,
     barWidth = 50;
@@ -19,7 +21,7 @@ var xScale = d3.scale.ordinal() //Limiting the width of the bars on the X dimens
                .domain(d3.range(0, barData.length));
 
 var colors = d3.scale.linear()
-               .range(['#FFB832', '#C61C6F'])
+               .range(['#fccccf', '#ce1a26'])
                .domain([0, d3.max(barData)+(d3.max(barData)*0.5)]);
 
 var tooltip = d3.select('body').append('div')
@@ -29,17 +31,16 @@ var tooltip = d3.select('body').append('div')
                 .style('opacity', 0)
 
 var barChart = d3.select('#bar-chart').append('svg') //Drawing the canvas
-    .attr('width', width)
-    .attr('height', height)
+    .attr('width', width + margin.right + margin.left)
+    .attr('height', height + margin.top + margin.bottom)
     .style('background', '#C9D7D6')
     .append('g') //Grouping all the rects of the bar chart together
+    .attr('transform', 'translate('+margin.left+', '+margin.top+')')
     .selectAll('rect').data(barData) //Drawing the data
     .enter().append('rect')
     .style('fill', colors)
     .attr('width', xScale.rangeBand())
-    .attr('height', function(d) {
-        return yScale(d);
-    })
+    .attr('height', 0)
     .attr('x', function(d, i) {
         return xScale(i); //Positioning the data on the X dimension
     })
@@ -70,7 +71,7 @@ barChart.transition()
     .attr('y', function(d) {
         return height-yScale(d); 
     })
-    .duration(1000).ease('linear')
+    .duration(2000).ease('linear')
 
 var yGuideScale = d3.scale.linear()
                     .range([height, 0])
@@ -83,7 +84,7 @@ var yAxis = d3.svg.axis()
 
 var yGuide = d3.select('svg').append('g')
 yAxis(yGuide)
-yGuide.attr('transform', 'translate(35, 0)')
+yGuide.attr('transform', 'translate('+margin.left+', '+margin.top+')')
         .selectAll('path')
         .style({'fill': 'none', 'stroke': '#000'})
 yGuide.selectAll('line')
@@ -98,7 +99,7 @@ var xAxis = d3.svg.axis()
 
 var xGuide = d3.select('svg').append('g')
 xAxis(xGuide)
-xGuide.attr('transform', 'translate(0, '+ (height-30) +')')
+xGuide.attr('transform', 'translate('+margin.left+', '+(height+margin.top)+')')
         .selectAll('path')
         .style({'fill': 'none', 'stroke': '#000'})
 xGuide.selectAll('line')
