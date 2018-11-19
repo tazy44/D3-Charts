@@ -104,3 +104,45 @@ xGuide.attr('transform', 'translate('+margin.left+', '+(height+margin.top)+')')
         .style({'fill': 'none', 'stroke': '#000'})
 xGuide.selectAll('line')
         .style({'stroke': '#000'})
+
+/////////////////////////////////////// The Pie Chart ///////////////////////////////////
+
+var pieWidth = 400,
+    pieHeight = 400,
+    pieRadius = 200,
+    pieColors = d3.scale.category20c();
+
+var pieData = [
+    {
+        label: "Rick",
+        value: 20
+    },
+    {
+        label: "Ronald",
+        value: 30
+    },
+    {
+        label: "Rose",
+        value: 50
+    }
+]
+
+var pie = d3.layout.pie()
+                .value(function(d) {
+                    return d.value;
+                })
+var pieArc = d3.svg.arc()
+                .outerRadius(pieRadius);
+
+var pieChart = d3.select('#pie-chart').append('svg')
+                .attr('width', pieWidth)
+                .attr('height', pieHeight)
+                .append('g')
+                    .attr('transform', 'translate('+(pieWidth-pieRadius)+','+(pieHeight-pieRadius)+')')
+                    .selectAll('path').data(pie(pieData))
+                    .enter().append('path')
+                    .attr('fill', function(d, i) {
+                        return pieColors(i);
+                    })
+                    .attr('d', pieArc)
+                
